@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Gerador de Senha On-line.</title>
+</head>
+<body>
+    <video src="video.mov" autoplay muted loop plays-inline class="back-video"></video>
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1 class="title">Gerador de Senha</h1>
+             <h4 class="subtitle">Utilize o nosso Software para Gerar uma Senha Forte e Segura!!!</h4>
+         </section>
+         <section class="box">
+            <div class="password">
+                <div class="text">
+                    <input type="text" name="password" id="password">
+                </div>
+                <div class="actions">
+                    <button id="copy"><img src="copy.svg" width="42" alt=""></button>
+                    <button id="renew"><img src="renew.svg"width="42"></button>
+                </div>
+            </div>
+            <div class="security-indicator">
+                <div id="security-indicator-bar" class = 'bar safe' ></div>
+            </div>
+         </section>
+         <section class="box customize">
+            <h3 class="title">Personalizar Senha</h3>
+            <div class="actions">
+                <div class="password-length">
+                    <p>Qtde de Caracteres: <span id="password-length-text">16</span></p>
+                    <input type="range" class="slider" name="password-length" id="password-length" value="16" min="4" max="64">
+                </div>
+                <div class="config">
+                    <label class="checkbox-container">
+                        <span class="text">Maiúsculas</span>
+                        <input type="checkbox" id="uppercase-check" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkbox-container">
+                        <span class="text">Números</span>
+                        <input type="checkbox" id="number-check" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkbox-container">
+                        <span class="text">Símbolos</span>
+                        <input type="checkbox" id="symbols-check" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+         </section>
+        </div>
+    
+        
+    
+    
+    
+    <script>
+        
+
+        
+        const inputElement = document.querySelector("#password");
+        const upperCaseCheckEl = document.querySelector('#uppercase-check');
+        const numberCaseCheckEl = document.querySelector('#number-check');
+        const symbolsCaseCheckEl = document.querySelector('#symbols-check');
+        const securityIndicatorBarEl = document.querySelector('#security-indicator-bar');
+
+        let passLength = 16
+       
+       
+        function generatePass(){
+
+        let caracters = 'abcdefghikjlmnopqrstuvwxyz'
+            
+        const upperCaseCaracters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        const numberCaracters = "1234567890"
+        const symbolCaracters = "@#$%&*()[]{}"
+
+        if(upperCaseCheckEl.checked){
+            caracters += upperCaseCaracters
+
+        }
+
+        if(numberCaseCheckEl.checked){
+            caracters += numberCaracters
+
+        }
+
+        if(symbolsCaseCheckEl.checked){
+            caracters += symbolCaracters
+
+        }
+
+        
+
+            
+
+            let pass = ""
+            
+            for(let i = 0; i < passLength; i++){
+                const randomNumber = Math.floor(Math.random()* caracters.length);
+                pass += caracters.substring(randomNumber, randomNumber + 1);
+
+            }
+            
+            inputElement.value = pass
+            calculateQuality();
+            calculateFontSize();
+        }
+
+        function calculateQuality() {
+
+            const percent = Math.round((passLength / 64 ) * 25 + (upperCaseCheckEl.checked ? 15 : 0 ) + (numberCaseCheckEl.checked ? 25 : 0) + (symbolsCaseCheckEl.checked ? 35 : 0));
+            
+            securityIndicatorBarEl.style.width = `${percent}%`
+
+            if(percent > 69){
+                securityIndicatorBarEl.classList.remove('critical');
+                securityIndicatorBarEl.classList.remove('warning');
+                securityIndicatorBarEl.classList.add('safe');
+                
+            }else if (percent > 50) {
+                securityIndicatorBarEl.classList.remove('critical');
+                securityIndicatorBarEl.classList.add('warning');
+                securityIndicatorBarEl.classList.remove('safe'); 
+            } else {
+                securityIndicatorBarEl.classList.add('critical');
+                securityIndicatorBarEl.classList.remove('warning');
+                securityIndicatorBarEl.classList.remove('safe');
+            }
+            if(percent >= 100){
+                securityIndicatorBarEl.classList.add("completed");
+            }else{
+                securityIndicatorBarEl.classList.remove("completed");
+            }
+        }
+
+        function calculateFontSize(){
+            if(passLength > 45) {
+                inputElement.classList.remove('font-xs');
+                inputElement.classList.remove('font-sm');
+                inputElement.classList.add('font-xxs');
+            } else if(passLength > 32) {
+                inputElement.classList.remove('font-xs');
+                inputElement.classList.remove('font-sm');
+                inputElement.classList.add('font-xxs');
+            } else if(passLength > 22) {
+                inputElement.classList.add('font-xs');
+                inputElement.classList.remove('font-sm');
+                inputElement.classList.remove('font-xxs');
+
+            } else {
+                inputElement.classList.remove('font-xs');
+                inputElement.classList.remove('font-sm');
+                inputElement.classList.remove('font-xxs');
+
+            }
+        }
+
+        function copy(){
+            navigator.clipboard.writeText(inputElement.value);
+        }
+        const passLengthEl = document.querySelector('#password-length');
+        passLengthEl.addEventListener('input' , function(){
+            passLength = passLengthEl.value
+            document.querySelector('#password-length-text').innerText = passLength
+            generatePass();
+
+        })
+        upperCaseCheckEl.addEventListener('click',generatePass);
+        numberCaseCheckEl.addEventListener('click',generatePass);
+        symbolsCaseCheckEl.addEventListener('click',generatePass);
+
+
+
+        const copyBtnElement = document.querySelector('#copy')
+        copyBtnElement.addEventListener('click', copy)
+        document.querySelector('#renew').addEventListener('click',generatePass);
+
+       
+
+    
+        generatePass()
+
+    </script>
+</body>
+</html>
